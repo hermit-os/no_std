@@ -63,6 +63,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ${{ matrix.packages }}
+          sudo apt-get install qemu
       - name: Download loader
         run: gh release download --repo hermit-os/loader --pattern hermit-loader-${{ matrix.arch }}
       - uses: mkroening/rust-toolchain-toml@main

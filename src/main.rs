@@ -7,6 +7,7 @@ extern crate alloc;
 extern crate hermit;
 
 use alloc::string::String;
+use alloc::vec;
 use alloc::vec::Vec;
 use core::ffi::CStr;
 use hermit::fs::{self, readdir, File};
@@ -23,8 +24,7 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8, _env: *const *const 
     }*/
 
     let fd = sys_opendir("/\0".as_ptr());
-    let mut v: Vec<u8> = Vec::new();
-    v.resize(0x1000, 0);
+    let mut v: Vec<u8> = vec![0; 0x1000];
     let readlen = sys_getdents64(fd, v.as_mut_ptr() as *mut Dirent64, 0x1000);
     let mut i = 0;
     loop {
@@ -39,7 +39,7 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8, _env: *const *const 
                 .unwrap()
         };
         info!("{}", name);
-        i = i + dir.d_off;
+        i += dir.d_off;
     }
     sys_close(fd);
 

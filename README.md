@@ -1,8 +1,8 @@
 # no_std
 
-`no_std` allows you  to boot HermitOS without `std`.
+The kernel feature `no_std` allows you to boot HermitOS without `std`.
 Please not, the [kernel interface](https://hermit-os.github.io/kernel/hermit/) is not stable and is under active development! 
-Only `std` has a stable interface.
+Only `std` provides an stable interface to the kernel.
 
 ## Requirements
 

@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+  merge_group:
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  RUSTFLAGS: -Dwarnings
+  RUSTDOCFLAGS: -Dwarnings
+
+jobs:
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: mkroening/rust-toolchain-toml@main
+      - run: rustup component add clippy
+      - name: Clippy
+        run: |
+          cargo clippy --all-targets
+          cargo clippy -Zbuild-std=std,panic_abort --target=x86_64-unknown-hermit --all-targets
+          cargo clippy -Zbuild-std=std,panic_abort --target=aarch64-unknown-hermit --all-targets
+          cargo clippy -Zbuild-std=std,panic_abort --target=riscv64gc-unknown-hermit --all-targets
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mkroening/rust-toolchain-toml@main
+      - run: rustup component add rustfmt
+      - name: Format
+        run: cargo fmt -- --check
+
+  check-docs:
+    name: Check docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: mkroening/rust-toolchain-toml@main
+      - name: Check docs
+        run: cargo doc --no-deps --document-private-items
+
+  run-hermit:
+    name: Run
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64, riscv64]
+        profile: [dev, release]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install ${{ matrix.packages }}
+      - name: Download loader
+        run: gh release download --repo hermit-os/loader --pattern hermit-loader-${{ matrix.arch }}
+      - uses: mkroening/rust-toolchain-toml@main
+      - uses: mkroening/rust-toolchain-toml@main
+        with:
+          toolchain-file: 'kernel/rust-toolchain.toml'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.arch }}-${{ matrix.profile }}
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Run Hermit
+        run: cargo run

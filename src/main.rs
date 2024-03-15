@@ -19,10 +19,6 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8, _env: *const *const 
     info!("Enter main function");
 
     info!("Read content of / with");
-    /*for i in readdir("/").expect("Unable to read /").iter() {
-        info!("{:?}", *i);
-    }*/
-
     let fd = sys_opendir("/\0".as_ptr());
     let mut v: Vec<u8> = vec![0; 0x1000];
     let readlen = sys_getdents64(fd, v.as_mut_ptr() as *mut Dirent64, 0x1000);

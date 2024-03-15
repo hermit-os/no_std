@@ -1,7 +1,7 @@
 # no_std
 
 `no_std` allows you  to boot HermitOS without `std`.
-Please not, the (kernel interface)[https://hermit-os.github.io/kernel/hermit/] is not stable and is under active development! 
+Please not, the [kernel interface](https://hermit-os.github.io/kernel/hermit/) is not stable and is under active development! 
 Only `std` has a stable interface.
 
 ## Requirements
@@ -16,7 +16,7 @@ cargo build
 
 ## Booting the kernel
 
-Boot kernel with `cargo run` or download the (`hermit-loader-x86_64`)[https://github.com/hermit-os/loader/releases] use following command:
+Boot kernel with `cargo run` or download the [`hermit-loader-x86_64`](https://github.com/hermit-os/loader/releases) use following command:
 
 ```sh
 qemu-system-x86_64 -display none -serial stdio -kernel hermit-loader-x86_64 -cpu Skylake-Client -device isa-debug-exit,iobase=0xf4,iosize=0x04 -smp 1 -m 512M -netdev user,id=u1,hostfwd=tcp::9975-:9975,hostfwd=udp::9975-:9975,net=192.168.76.0/24,dhcpstart=192.168.76.9 -device virtio-net-pci,netdev=u1,disable-legacy=on -initrd target/x86_64-unknown-none/debug/no_std

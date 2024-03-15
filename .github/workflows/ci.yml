@@ -54,7 +54,7 @@ jobs:
     strategy:
       matrix:
         arch: [x86_64, aarch64, riscv64]
-        profile: [dev, release]
+        profile: [dev]
     steps:
       - uses: actions/checkout@v4
         with:

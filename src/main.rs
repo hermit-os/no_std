@@ -60,18 +60,18 @@ pub extern "C" fn main(_argc: i32, _argv: *const *const u8, _env: *const *const 
         error!("Unable to open file");
     };
 
-    info!("create file /host/test.txt");
-    if let Ok(mut file) = File::create("/host/test.txt") {
-        write!(file, "Hello Linux!").expect("Unable to write into /host/test.txt");
+    info!("create file /tmp/test.txt");
+    if let Ok(mut file) = File::create("/tmp/test.txt") {
+        write!(file, "Hello from HermitOS!").expect("Unable to write into /tmp/test.txt");
     } else {
         error!("Unable to create file");
     }
 
-    info!("read file /host/test.txt");
-    if let Ok(mut file) = File::open("/host/test.txt") {
+    info!("read file /tmp/test.txt");
+    if let Ok(mut file) = File::open("/tmp/test.txt") {
         let mut content: String = String::new();
         if file.read_to_string(&mut content).is_err() {
-            error!("Unable to read /proc/version");
+            error!("Unable to read /tmp/test.txt");
         }
         info!("File content {}", content);
     } else {
